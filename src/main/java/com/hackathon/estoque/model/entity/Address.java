@@ -22,56 +22,44 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Address {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "CEP is required")
-    @Pattern(regexp = "\\d{8}", message = "CEP must contain exactly 8 digits")
     @Column(nullable = false, length = 8)
     private String cep;
 
-    @NotBlank(message = "Street is required")
-    @Size(max = 255, message = "Street must not exceed 255 characters")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String street;
 
-    @Size(max = 10, message = "Number must not exceed 10 characters")
+    @Column(length = 10)
     private String number;
 
-    @NotBlank(message = "City is required")
-    @Size(max = 100, message = "City must not exceed 100 characters")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String city;
 
-    @NotBlank(message = "State is required")
-    @Size(min = 2, max = 2, message = "State must be exactly 2 characters")
     @Column(nullable = false, length = 2)
     private String state;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private java.time.LocalDateTime createdAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(name = "updated_at")
+    private java.time.LocalDateTime updatedAt;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true, nullable = false)
     private User user;
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = java.time.LocalDateTime.now();
+        this.updatedAt = java.time.LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = java.time.LocalDateTime.now();
     }
 
     public Address(String cep, String street, String number, String city, String state) {

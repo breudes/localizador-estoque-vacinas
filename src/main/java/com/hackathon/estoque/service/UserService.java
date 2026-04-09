@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,5 +42,39 @@ public class UserService {
 
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public User createUser(User user) {
+        validateUserDoesNotExist(user.getCpf(), user.getEmail());
+        return userRepository.save(user);
+    }
+
+    public User updateUser(Long id, User updatedUser) {
+        User user = findById(id);
+        if (!user.getCpf().equals(updatedUser.getCpf()) && existsByCpf(updatedUser.getCpf())) {
+            throw new CpfAlreadyRegisteredException("CPF already registered in the system");
+        }
+        if (!user.getEmail().equals(updatedUser.getEmail()) && existsByEmail(updatedUser.getEmail())) {
+            throw new EmailAlreadyRegisteredException("Email already registered in the system");
+        }
+        user.setName(updatedUser.getName());
+        user.setEmail(updatedUser.getEmail());
+        user.setCpf(updatedUser.getCpf());
+        user.setPassword(updatedUser.getPassword());
+        // Atualizar outros campos conforme necessário
+        return userRepository.save(user);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 }

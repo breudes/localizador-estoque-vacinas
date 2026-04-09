@@ -1,7 +1,6 @@
 package com.hackathon.estoque.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.hackathon.estoque.model.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,9 +23,8 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
-    private RoleType roleType;
+    private String name; // Ex: "USER", "ADMIN"
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @CreationTimestamp
@@ -37,12 +35,12 @@ public class Role implements GrantedAuthority {
         createdAt = LocalDateTime.now();
     }
 
-    public Role(RoleType roleType) {
-        this.roleType = roleType;
+    public Role(String name) {
+        this.name = name;
     }
 
     @Override
     public String getAuthority() {
-        return "ROLE_" + roleType.getValue();
+        return "ROLE_" + name;
     }
 }
