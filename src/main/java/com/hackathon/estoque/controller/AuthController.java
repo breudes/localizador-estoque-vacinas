@@ -1,32 +1,40 @@
 package com.hackathon.estoque.controller;
 
-import com.hackathon.estoque.model.dto.AuthResponseDTO;
-import com.hackathon.estoque.model.dto.RegisterRequestDTO;
-import com.hackathon.estoque.model.dto.LoginRequestDTO;
-import com.hackathon.estoque.service.AuthService;
+import com.hackathon.estoque.dto.AuthResponseDto;
+import com.hackathon.estoque.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import com.hackathon.estoque.model.User;
+import com.hackathon.estoque.dto.LoginRequestDto;
+import com.hackathon.estoque.dto.RegisterRequestDto;
+import com.hackathon.estoque.security.TokenService;
+import com.hackathon.estoque.service.AuthService;
 
 @RestController
-@RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
+    private final TokenService tokenService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponseDTO> registerUser(@Valid @RequestBody RegisterRequestDTO registerRequest) {
-        AuthResponseDTO response = authService.registerUser(registerRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<AuthResponseDto> register(@RequestBody @Valid RegisterRequestDto body) {
+        User user = authService.registerEntity(body);
+        String token = tokenService.generateToken(user);
+        return ResponseEntity.ok(new AuthResponseDto(token));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
-        AuthResponseDTO response = authService.login(loginRequest);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<AuthResponseDto> login(@RequestBody @Valid LoginRequestDto body) {
+        User user = authService.authenticate(body);
+        String token = tokenService.generateToken(user);
+        return ResponseEntity.ok(new AuthResponseDto(token));
     }
 }

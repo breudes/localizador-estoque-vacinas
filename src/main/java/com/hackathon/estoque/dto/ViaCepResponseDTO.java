@@ -1,4 +1,4 @@
-package com.hackathon.estoque.model.dto;
+package com.hackathon.estoque.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

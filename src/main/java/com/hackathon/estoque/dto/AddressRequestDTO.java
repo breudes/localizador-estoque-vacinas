@@ -1,4 +1,4 @@
-package com.hackathon.estoque.model.dto;
+package com.hackathon.estoque.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -21,9 +21,6 @@ public class AddressRequestDTO {
     @NotBlank(message = "Street is required")
     @Size(max = 255, message = "Street must not exceed 255 characters")
     private String street;
-
-    @Size(max = 10, message = "Number must not exceed 10 characters")
-    private String number;
 
     @NotBlank(message = "City is required")
     @Size(max = 100, message = "City must not exceed 100 characters")

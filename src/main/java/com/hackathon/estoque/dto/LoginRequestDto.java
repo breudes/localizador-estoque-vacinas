@@ -1,8 +1,7 @@
-package com.hackathon.estoque.model.dto;
+package com.hackathon.estoque.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,13 +11,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequestDTO {
+public class LoginRequestDto {
 
-    @NotBlank(message = "CPF is required")
-    @Pattern(regexp = "\\d{11}", message = "CPF must contain exactly 11 digits")
+    @Pattern(regexp = "\\d{11}", message = "CPF must contain only numbers")
     private String cpf;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must have at least 6 characters")
     private String password;
 }

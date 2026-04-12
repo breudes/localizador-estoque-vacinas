@@ -3,7 +3,7 @@ package com.hackathon.estoque.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hackathon.estoque.exception.CepInvalidoException;
 import com.hackathon.estoque.exception.CepNaoEncontradoException;
-import com.hackathon.estoque.model.dto.ViaCepResponseDTO;
+import com.hackathon.estoque.dto.ViaCepResponseDTO;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URI;

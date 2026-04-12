@@ -1,6 +1,6 @@
 package com.hackathon.estoque.repository;
 
-import com.hackathon.estoque.model.entity.User;
+import com.hackathon.estoque.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +13,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByCpf(String cpf);
 
-    boolean existsByEmail(String email);
+
 }

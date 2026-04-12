@@ -1,7 +1,7 @@
 package com.hackathon.estoque.controller;
 
-import com.hackathon.estoque.model.dto.UsuarioRequestDTO;
-import com.hackathon.estoque.model.dto.ViaCepResponseDTO;
+import com.hackathon.estoque.dto.UsuarioRequestDTO;
+import com.hackathon.estoque.dto.ViaCepResponseDTO;
 import com.hackathon.estoque.service.BuscaCepService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

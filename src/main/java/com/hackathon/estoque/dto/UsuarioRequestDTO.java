@@ -1,4 +1,4 @@
-package com.hackathon.estoque.model.dto;
+package com.hackathon.estoque.dto;
 
 public record UsuarioRequestDTO(
         String cep,

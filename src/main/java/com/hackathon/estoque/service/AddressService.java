@@ -1,8 +1,8 @@
 package com.hackathon.estoque.service;
 
-import com.hackathon.estoque.model.dto.AddressRequestDTO;
-import com.hackathon.estoque.model.entity.Address;
-import com.hackathon.estoque.model.entity.User;
+import com.hackathon.estoque.dto.AddressRequestDTO;
+import com.hackathon.estoque.model.Address;
+import com.hackathon.estoque.model.User;
 import com.hackathon.estoque.repository.AddressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,20 +15,28 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
 
-    public Address createAddress(AddressRequestDTO addressRequest, User user) {
-        Address address = new Address(
-            addressRequest.getCep(),
-            addressRequest.getStreet(),
-            addressRequest.getNumber(),
-            addressRequest.getCity(),
-            addressRequest.getState()
-        );
+    public Address createAddress(AddressRequestDTO dto, User user) {
 
-        address.setUser(user);
-        return address;
+        Address address = Address.builder()
+                .cep(dto.getCep())
+                .street(dto.getStreet())
+                .city(dto.getCity())
+                .state(dto.getState())
+                .user(user)
+                .build();
+        user.setAddress(address);
+        return addressRepository.save(address);
     }
 
-    public Address save(Address address) {
+    public Address updateAddress(AddressRequestDTO dto, User user) {
+        Address address = addressRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Address not found for user ID: " + user.getId()));
+
+        address.setCep(dto.getCep());
+        address.setStreet(dto.getStreet());
+        address.setCity(dto.getCity());
+        address.setState(dto.getState());
+
         return addressRepository.save(address);
     }
 }

@@ -1,15 +1,18 @@
 package com.hackathon.estoque.service;
 
-import com.hackathon.estoque.model.entity.User;
+import com.hackathon.estoque.dto.UserResponseDto;
+import com.hackathon.estoque.exception.InvalidCredentialsException;
+import com.hackathon.estoque.exception.UserNotFoundException;
+import com.hackathon.estoque.model.User;
 import com.hackathon.estoque.repository.UserRepository;
 import com.hackathon.estoque.exception.CpfAlreadyRegisteredException;
-import com.hackathon.estoque.exception.EmailAlreadyRegisteredException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import com.hackathon.estoque.mapper.UserMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -17,64 +20,77 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-
-    public void validateUserDoesNotExist(String cpf, String email) {
-        if (userRepository.existsByCpf(cpf)) {
-            throw new CpfAlreadyRegisteredException("CPF already registered in the system");
-        }
-
-        if (userRepository.existsByEmail(email)) {
-            throw new EmailAlreadyRegisteredException("Email already registered in the system");
-        }
-    }
-
-    public User save(User user) {
-        return userRepository.save(user);
-    }
-
-    public Optional<User> findByCpf(String cpf) {
-        return userRepository.findByCpf(cpf);
-    }
+    private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     public boolean existsByCpf(String cpf) {
         return userRepository.existsByCpf(cpf);
     }
 
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public List<UserResponseDto> findAll() {
+        return userMapper.toResponseDtoList(userRepository.findAll());
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public UserResponseDto findById(Long id) {
+        return userMapper.toResponseDto(
+                userRepository.findById(id)
+                        .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id))
+        );
     }
 
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public UserResponseDto getByCpf(String cpf) {
+        return userMapper.toResponseDto(
+                userRepository.findByCpf(cpf)
+                        .orElseThrow(() -> new UserNotFoundException("User not found with CPF: " + cpf))
+        );
     }
 
-    public User createUser(User user) {
-        validateUserDoesNotExist(user.getCpf(), user.getEmail());
-        return userRepository.save(user);
-    }
+    public UserResponseDto update(Long id, User updatedUser) {
 
-    public User updateUser(Long id, User updatedUser) {
-        User user = findById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+
         if (!user.getCpf().equals(updatedUser.getCpf()) && existsByCpf(updatedUser.getCpf())) {
-            throw new CpfAlreadyRegisteredException("CPF already registered in the system");
+            throw new CpfAlreadyRegisteredException("CPF already registered");
         }
-        if (!user.getEmail().equals(updatedUser.getEmail()) && existsByEmail(updatedUser.getEmail())) {
-            throw new EmailAlreadyRegisteredException("Email already registered in the system");
-        }
+
         user.setName(updatedUser.getName());
-        user.setEmail(updatedUser.getEmail());
         user.setCpf(updatedUser.getCpf());
-        user.setPassword(updatedUser.getPassword());
-        // Atualizar outros campos conforme necessário
-        return userRepository.save(user);
+        user.setEmail(updatedUser.getEmail());
+
+        if (updatedUser.getRole() != null) {
+            user.setRole(updatedUser.getRole());
+        }
+
+        if (updatedUser.getAddress() != null) {
+            user.setAddress(updatedUser.getAddress());
+        }
+
+        User savedUser = userRepository.save(user);
+
+        return userMapper.toResponseDto(savedUser);
     }
 
-    public void deleteUser(Long id) {
+    public void delete(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException("User not found with ID: " + id);
+        }
         userRepository.deleteById(id);
+    }
+
+    public void updatePassword(Long id, String oldPassword, String newPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+
+        if (!user.getId().equals(id)) {
+            throw new RuntimeException("You can only change your own password");
+        }
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid current password");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

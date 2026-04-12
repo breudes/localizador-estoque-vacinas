@@ -1,4 +1,4 @@
-package com.hackathon.estoque.model.entity;
+package com.hackathon.estoque.model;
 
 public class FaixaEtaria {
     private int idadeMinimaEmMeses;
