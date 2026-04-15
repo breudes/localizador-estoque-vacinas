@@ -50,7 +50,13 @@ public class SecurityFilter extends OncePerRequestFilter {
             var authorities = user.getAuthorities();
 
             // Cria um objeto de autenticação com o usuário autenticado e suas permissões
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+            var userDetails = new CustomUserDetails(user);
+
+            var authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+            );
 
             // Associa a autenticação ao contexto de segurança da aplicação
             if (SecurityContextHolder.getContext().getAuthentication() == null) {

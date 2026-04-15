@@ -32,9 +32,13 @@ public class AuthService {
             throw new CpfAlreadyRegisteredException("CPF already registered");
         }
 
+        System.out.println("Registering user with CPF: " + dto.getCpf());
+
         User user = userMapper.toEntityRegister(dto);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setRole(UserRole.USER);
+
+        System.out.println("User entity created: " + user.getCpf());
 
         return userRepository.save(user);
     }

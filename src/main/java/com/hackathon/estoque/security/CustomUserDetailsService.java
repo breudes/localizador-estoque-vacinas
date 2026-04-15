@@ -30,10 +30,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = this.userRepository.findByCpf(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
-        // Retorna uma instância de UserDetails com o cpf, senha e as autoridades definidas no objeto User
-        return new org.springframework.security.core.userdetails.User(
-                user.getCpf(),
-                user.getPassword(),
-                user.getAuthorities());
+        return new CustomUserDetails(user);
     }
 }
