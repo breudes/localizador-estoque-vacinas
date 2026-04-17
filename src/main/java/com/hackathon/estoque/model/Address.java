@@ -2,6 +2,7 @@ package com.hackathon.estoque.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hackathon.estoque.model.health.HealthFacility;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -25,7 +26,7 @@ public class Address {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String street;
 
     @NotBlank
@@ -50,14 +51,11 @@ public class Address {
 
     @JsonBackReference
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 
-    public Address(String cep, String street, String city, String state, User user) {
-        this.cep = cep;
-        this.street = street;
-        this.city = city;
-        this.state = state;
-        this.user = user;
-    }
+    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "health_facility_id", unique = true)
+    private HealthFacility healthFacility;
 }
