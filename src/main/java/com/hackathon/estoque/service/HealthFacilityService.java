@@ -88,10 +88,7 @@ public class HealthFacilityService {
         if(healthFacility.isPresent()){
             HealthFacility foundHealthFacility = healthFacility.get();
             Address address = getAddressByHealthFacilityId(foundHealthFacility.getId());
-
             if(address!=null) foundHealthFacility.setAddress(address);
-            else System.out.println("sem endereço");
-
             return foundHealthFacility;
         }
         return null;

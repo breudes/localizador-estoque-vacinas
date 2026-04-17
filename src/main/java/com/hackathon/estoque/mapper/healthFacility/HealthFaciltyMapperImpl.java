@@ -41,6 +41,7 @@ public class HealthFaciltyMapperImpl implements HealthFacilityMapper {
                 healthFacility.getCnes(),
                 healthFacility.getEmail(),
                 healthFacility.getPhone(),
+                healthFacility.isActive(),
                 new AddressResponseDTO(healthFacility.getAddress())
         );
     }
@@ -64,6 +65,7 @@ public class HealthFaciltyMapperImpl implements HealthFacilityMapper {
                 healthFacility.getCnes(),
                 healthFacility.getEmail(),
                 healthFacility.getPhone(),
+                healthFacility.isActive(),
                 addressResponseDTO
         );
     }
