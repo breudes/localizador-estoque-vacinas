@@ -9,8 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +31,7 @@ public class UserController {
 
     // Buscar usuário por CPF (ADMIN ou o próprio usuário)
     @GetMapping("/cpf/{cpf}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #cpf == principal.username")
     public ResponseEntity<UserResponseDto> getUserByCpf(@PathVariable String cpf) {
         UserResponseDto user = userService.getByCpf(cpf);
         return ResponseEntity.ok(user);
@@ -63,7 +61,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/password")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id") // Use o .id que criamos no CustomUserDetails
     public ResponseEntity<Void> updatePassword(
             @PathVariable Long id,
             @RequestBody @Valid UpdatePasswordDto dto) {
