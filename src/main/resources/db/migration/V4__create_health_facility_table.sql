@@ -4,6 +4,7 @@ CREATE TABLE health_facilities (
     cnes VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(255),
     phone VARCHAR(50),
+    active BOOLEAN DEFAULT TRUE,
     address_id BIGINT UNIQUE,
     FOREIGN KEY (address_id) REFERENCES addresses(id)
 );

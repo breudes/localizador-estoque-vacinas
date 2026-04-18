@@ -11,5 +11,6 @@ CREATE TABLE vaccines (
     dose_quantity INT NOT NULL,
     booster BOOLEAN DEFAULT FALSE,
     single_dose BOOLEAN DEFAULT FALSE,
-    interval_in_days INT
+    interval_in_days INT,
+    active BOOLEAN DEFAULT FALSE
 );
