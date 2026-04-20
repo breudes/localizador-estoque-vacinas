@@ -33,9 +33,19 @@ public class TokenService {
     }
 
     public String validateToken(String token) {
-        if (token == null || token.isBlank()) {
-            return null;
-        }
+//        if (token == null || token.isBlank()) {
+//            return null;
+//        }
+//        try {
+//            Algorithm algorithm = Algorithm.HMAC256(secret);
+//            return JWT.require(algorithm)
+//                    .withIssuer("login-auth-api")
+//                    .build()
+//                    .verify(token)
+//                    .getSubject();
+//        } catch (JWTVerificationException exception) {
+//            return null;
+//        }
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
@@ -44,7 +54,7 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception) {
-            // MUITO IMPORTANTE: Isso vai dizer o motivo real no console
+            // MUDE ISSO PARA VER O ERRO REAL NO CONSOLE
             System.out.println("Erro na validação do Token: " + exception.getMessage());
             return null;
         }

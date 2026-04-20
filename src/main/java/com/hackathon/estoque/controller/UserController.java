@@ -1,73 +1,67 @@
 package com.hackathon.estoque.controller;
 
-import com.hackathon.estoque.dto.UpdatePasswordDto;
-import com.hackathon.estoque.dto.UserResponseDto;
+import com.hackathon.estoque.dto.*;
+import com.hackathon.estoque.mapper.AddressMapper;
+import com.hackathon.estoque.mapper.UserMapper;
 import com.hackathon.estoque.model.User;
-import com.hackathon.estoque.security.CustomUserDetails;
 import com.hackathon.estoque.service.UserService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/users")
-@RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
+
     private final UserService userService;
 
-    // Buscar usuário por ID (ADMIN ou o próprio usuário)
-    @GetMapping("/id/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    public ResponseEntity<UserResponseDto> getUserById(
-            @PathVariable Long id) {
+    private final UserMapper userMapper = UserMapper.INSTANCE;
+    private final AddressMapper addressMapper = AddressMapper.INSTANCE;
 
-        UserResponseDto user = userService.findById(id);
-        return ResponseEntity.ok(user);
+    UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    // Buscar usuário por CPF (ADMIN ou o próprio usuário)
-    @GetMapping("/cpf/{cpf}")
-    @PreAuthorize("hasRole('ADMIN') or #cpf == principal.username")
-    public ResponseEntity<UserResponseDto> getUserByCpf(@PathVariable String cpf) {
-        UserResponseDto user = userService.getByCpf(cpf);
-        return ResponseEntity.ok(user);
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getProfile(@AuthenticationPrincipal User authenticatedUser) {
+        return ResponseEntity.ok(userMapper.toResponseDto(authenticatedUser));
     }
 
-    // Listar todos os usuários (apenas ADMIN)
-    @GetMapping("/all")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.findAll());
+    @PostMapping
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody CreateUserDTO data) {
+        var user = userService.createUser(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
-    // Atualizar usuário (ADMIN ou o próprio usuário)
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @RequestBody User user) {
-        UserResponseDto updated = userService.update(id, user);
-        return ResponseEntity.ok(updated);
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDTO> updateProfile(@Valid @RequestBody UpdateUserDTO dto,
+                                                         @AuthenticationPrincipal User authenticatedUser) {
+        var updatedUser = userService.update(authenticatedUser.getId(), dto);
+        return ResponseEntity.ok(updatedUser);
     }
 
-    // Deletar usuário (ADMIN ou o próprio usuário)
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.delete(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/address")
+    public ResponseEntity<AddressResponseDTO> getAddress(@AuthenticationPrincipal User authenticatedUser) {
+        AddressResponseDTO address = userService.findAddressByUser(authenticatedUser);
+        return ResponseEntity.ok(address);
     }
 
-    @PutMapping("/{id}/password")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id") // Use o .id que criamos no CustomUserDetails
-    public ResponseEntity<Void> updatePassword(
-            @PathVariable Long id,
-            @RequestBody @Valid UpdatePasswordDto dto) {
+    // CADASTRAR ou ATUALIZAR o endereço
+    @PostMapping("/address")
+    public ResponseEntity<AddressResponseDTO> saveAddress(
+            @AuthenticationPrincipal User authenticatedUser,
+            @Valid @RequestBody AddressRequestDTO dto) {
 
-        userService.updatePassword(id, dto.getOldPassword(), dto.getNewPassword());
+        AddressResponseDTO savedAddress = userService.saveOrUpdate(authenticatedUser, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedAddress);
+    }
 
+    // DELETAR o endereço
+    @DeleteMapping("/address")
+    public ResponseEntity<Void> deleteAddress(@AuthenticationPrincipal User authenticatedUser) {
+        userService.deleteAddress(authenticatedUser);
         return ResponseEntity.noContent().build();
     }
 }

@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 public class UpdatePasswordDto {
 
-    @NotBlank(message = "Current password is required")
     private String oldPassword;
 
     @NotBlank(message = "New password is required")

@@ -18,6 +18,10 @@ public class CustomUserDetails  implements UserDetails {
         return user.getCpf();
     }
 
+    public User getUserEntity() {
+        return this.user;
+    }
+
     public Long getId() {
         return user.getId();
     }

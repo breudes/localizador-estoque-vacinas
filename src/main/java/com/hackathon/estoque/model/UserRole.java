@@ -1,4 +1,4 @@
-package com.hackathon.estoque.enums;
+package com.hackathon.estoque.model;
 
 public enum UserRole {
     ADMIN("admin"),

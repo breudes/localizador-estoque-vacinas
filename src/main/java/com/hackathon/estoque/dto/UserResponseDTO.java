@@ -9,12 +9,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponseDto {
+public class UserResponseDTO {
 
     private Long id;
     private String name;
     private String email;
     private String cpf;
     private LocalDate dataNasc;
-    private int age;
 }

@@ -1,26 +1,27 @@
 package com.hackathon.estoque.mapper;
 
+import com.hackathon.estoque.dto.CreateUserDTO;
 import com.hackathon.estoque.dto.RegisterRequestDto;
-import com.hackathon.estoque.dto.UserResponseDto;
+import com.hackathon.estoque.dto.UpdateUserResponseDTO;
+import com.hackathon.estoque.dto.UserResponseDTO;
 import com.hackathon.estoque.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface UserMapper {
 
-    UserResponseDto toResponseDto(User user);
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    List<UserResponseDto> toResponseDtoList(List<User> users);
+    User toEntity(RegisterRequestDto registerRequestDto);
 
-//    @Mapping(target = "id", ignore = true)
-//    @Mapping(target = "role", ignore = true)
-//    @Mapping(target = "password", ignore = true)
-//    @Mapping(target = "createdAt", ignore = true)
-//    @Mapping(target = "updatedAt", ignore = true)
-//    @Mapping(target = "address", ignore = true)
-    User toEntityRegister(RegisterRequestDto dto);
+    UserResponseDTO toResponseDto(User user);
+
+    List<UserResponseDTO> toResponseDtoList(List<User> users);
+
+    User toEntityUser(CreateUserDTO registerRequestDto);
 
 }
