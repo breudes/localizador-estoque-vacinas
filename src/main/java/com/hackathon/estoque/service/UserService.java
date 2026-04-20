@@ -4,6 +4,7 @@ import com.hackathon.estoque.dto.*;
 import com.hackathon.estoque.exception.AddressNotFoundException;
 import com.hackathon.estoque.exception.UserNotFoundException;
 import com.hackathon.estoque.mapper.AddressMapper;
+import com.hackathon.estoque.mapper.UserMapperImpl;
 import com.hackathon.estoque.model.Address;
 import com.hackathon.estoque.model.User;
 import com.hackathon.estoque.model.UserRole;
@@ -15,9 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import com.hackathon.estoque.mapper.UserMapper;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -26,16 +24,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepository;
-
-    private final UserMapper userMapper = UserMapper.INSTANCE;
+    private final UserMapperImpl userMapper;
     private final AddressMapper addressMapper = AddressMapper.INSTANCE;
 
     public boolean existsByCpf(String cpf) {
         return userRepository.existsByCpf(cpf);
-    }
-
-    public List<UserResponseDTO> findAll() {
-        return userMapper.toResponseDtoList(userRepository.findAll());
     }
 
     public UserResponseDTO findById(Long id) {
@@ -45,24 +38,16 @@ public class UserService {
         );
     }
 
-    public UserResponseDTO getByCpf(String cpf) {
-        return userMapper.toResponseDto(
-                userRepository.findByCpf(cpf)
-                        .orElseThrow(() -> new UserNotFoundException("User not found with CPF: " + cpf))
-        );
-    }
-
-    public UserResponseDTO createAdmin(CreateUserDTO data) {
+    public void createAdmin(CreateUserDTO data) {
         if (existsByCpf(data.getCpf())) {
             throw new CpfAlreadyRegisteredException("CPF already registered");
         }
-
         User user = userMapper.toEntityUser(data);
         user.setPassword(passwordEncoder.encode(data.getPassword()));
         user.setRole(UserRole.ADMIN);
 
         User savedUser = userRepository.save(user);
-        return userMapper.toResponseDto(savedUser);
+        userMapper.toResponseDto(savedUser);
     }
 
     public UserResponseDTO createUser(CreateUserDTO data) {

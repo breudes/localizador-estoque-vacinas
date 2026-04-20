@@ -2,7 +2,6 @@ package com.hackathon.estoque.controller;
 
 import com.hackathon.estoque.dto.CreateUserDTO;
 import com.hackathon.estoque.dto.UpdateUserDTO;
-import com.hackathon.estoque.dto.UpdateUserResponseDTO;
 import com.hackathon.estoque.dto.UserResponseDTO;
 import com.hackathon.estoque.service.UserService;
 import jakarta.validation.Valid;

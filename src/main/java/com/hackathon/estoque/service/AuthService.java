@@ -3,13 +3,14 @@ package com.hackathon.estoque.service;
 import com.hackathon.estoque.dto.RegisterRequestDto;
 import com.hackathon.estoque.exception.InvalidCredentialsException;
 import com.hackathon.estoque.exception.UserNotFoundException;
+import com.hackathon.estoque.mapper.UserMapperImpl;
 import com.hackathon.estoque.model.UserRole;
 import com.hackathon.estoque.exception.CpfAlreadyRegisteredException;
-import com.hackathon.estoque.mapper.UserMapper;
 import com.hackathon.estoque.model.User;
 import com.hackathon.estoque.repository.UserRepository;
 import com.hackathon.estoque.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,20 +18,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
-
-    private final UserMapper userMapper = UserMapper.INSTANCE;
-
+    private final UserMapperImpl userMapper;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         // 1. Busca o usuário no banco
         User user = userRepository.findByCpf(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com CPF: " + username));

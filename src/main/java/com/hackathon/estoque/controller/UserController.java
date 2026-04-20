@@ -1,8 +1,10 @@
 package com.hackathon.estoque.controller;
 
 import com.hackathon.estoque.dto.*;
-import com.hackathon.estoque.mapper.AddressMapper;
-import com.hackathon.estoque.mapper.UserMapper;
+import com.hackathon.estoque.dto.AddressRequestDTO;
+import com.hackathon.estoque.dto.AddressResponseDTO;
+import com.hackathon.estoque.dto.UpdateUserDTO;
+import com.hackathon.estoque.mapper.UserMapperImpl;
 import com.hackathon.estoque.model.User;
 import com.hackathon.estoque.service.UserService;
 import jakarta.validation.Valid;
@@ -17,11 +19,11 @@ public class UserController {
 
     private final UserService userService;
 
-    private final UserMapper userMapper = UserMapper.INSTANCE;
-    private final AddressMapper addressMapper = AddressMapper.INSTANCE;
+    private final UserMapperImpl userMapper;
 
-    UserController(UserService userService) {
+    UserController(UserService userService, UserMapperImpl userMapper) {
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @GetMapping("/me")
