@@ -48,7 +48,6 @@ public class UserController {
         return ResponseEntity.ok(address);
     }
 
-    // CADASTRAR ou ATUALIZAR o endereço
     @PostMapping("/address")
     public ResponseEntity<AddressResponseDTO> saveAddress(
             @AuthenticationPrincipal User authenticatedUser,
@@ -58,7 +57,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedAddress);
     }
 
-    // DELETAR o endereço
     @DeleteMapping("/address")
     public ResponseEntity<Void> deleteAddress(@AuthenticationPrincipal User authenticatedUser) {
         userService.deleteAddress(authenticatedUser);

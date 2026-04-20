@@ -45,7 +45,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             System.out.println("Subject extraído do Token: [" + subject + "]");
 
-            // CORREÇÃO: Verifique se o subject não é nulo antes de buscar no repositório
             if (subject != null) {
                 var userOptional = userRepository.findByCpf(subject);
 
@@ -58,7 +57,6 @@ public class SecurityFilter extends OncePerRequestFilter {
                 }
             }
         }
-        // Sempre continue a corrente, mesmo que não haja token ou o token seja inválido
         filterChain.doFilter(request, response);
     }
 
@@ -66,23 +64,18 @@ public class SecurityFilter extends OncePerRequestFilter {
      * Este método recupera o token de autenticação do cabeçalho "Authorization"
      * da requisição HTTP. Se o cabeçalho estiver ausente ou vazio, retorna null.
      */
-//    private String recoverToken(HttpServletRequest request) {
-//        var authHeader = request.getHeader("Authorization");
-//        if (authHeader == null || authHeader.isBlank()) {
-//            System.out.println("No Authorization header found in request to " + request.getRequestURI());
-//            return null;
-//        }
-//        return authHeader.replace("Bearer ", "");
-//    }
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
-
-        // Verifica se o header existe e se começa com o prefixo correto
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return null;
         }
 
-        // substring(7) remove exatamente "Bearer " (6 letras + 1 espaço)
-        return authHeader.substring(7).trim();
+        String token = authHeader.substring(7).trim();
+
+        if (token.startsWith("\"") && token.endsWith("\"")) {
+            token = token.substring(1, token.length() - 1);
+        }
+
+        return token;
     }
 }
