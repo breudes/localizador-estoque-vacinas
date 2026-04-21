@@ -13,8 +13,8 @@ public class UserMapperImpl implements UserMapper {
     @Override
     public User toEntity(RegisterRequestDto registerRequestDto) {
         return new User(
-                registerRequestDto.getName(),
                 registerRequestDto.getCpf(),
+                registerRequestDto.getName(),
                 registerRequestDto.getEmail(),
                 registerRequestDto.getPassword(),
                 registerRequestDto.getDataNasc()
@@ -42,8 +42,8 @@ public class UserMapperImpl implements UserMapper {
     @Override
     public User toEntityUser(CreateUserDTO registerRequestDto) {
         return new User(
-                registerRequestDto.getName(),
                 registerRequestDto.getCpf(),
+                registerRequestDto.getName(),
                 registerRequestDto.getEmail(),
                 registerRequestDto.getPassword(),
                 registerRequestDto.getDataNasc()
