@@ -28,6 +28,8 @@ public class Inventory {
     private String batch; // lote
     private Date expirationDate;
     private boolean active;
+    private Long createdBy;
+    private Long updatedBy;
 
     public Inventory(int stock, String batch, Date expirationDate) {
         this.stock = stock;

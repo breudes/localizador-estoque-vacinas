@@ -31,4 +31,6 @@ public class Vaccine {
     private boolean booster;
     private boolean singleDose;
     private int intervalInDays;
+    private Long createdBy;
+    private Long updatedBy;
 }

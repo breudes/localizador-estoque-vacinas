@@ -28,6 +28,8 @@ public class HealthFacility {
     private Address address;
     @OneToMany(mappedBy = "healthFacility", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Inventory> vaccinesInventory;
+    private Long createdBy;
+    private Long updatedBy;
 
     public void setAddress(AddressRequestDTO address) {
         Address newAddress = new Address();
