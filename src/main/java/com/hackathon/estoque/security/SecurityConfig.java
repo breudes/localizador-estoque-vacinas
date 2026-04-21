@@ -6,9 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,12 +29,11 @@ public class SecurityConfig {
      *
      * @param http - Objeto HttpSecurity para configuração das permissões e segurança
      * @return SecurityFilterChain - Cadeia de filtros de segurança configurada
-     * @throws Exception - Exceção genérica em caso de falha na configuração de segurança
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         // ENDPOINTS PÚBLICOS - criação de usuários
@@ -54,9 +54,27 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/address").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/users/address").hasAnyRole("USER", "ADMIN")
 
+                        // ESTABELECIMENTO (HEALTH FACILITY)
+                        .requestMatchers(HttpMethod.POST, "/api/health-facilities").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/health-facilities/update").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/health-facilities/delete/{cnes}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/health-facilities/**").hasAnyRole("USER", "ADMIN")
+
+                        // INVENTÁRIO DE VACINAS (INVENTORY)
+                        .requestMatchers(HttpMethod.POST, "/api/health-facilities").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/health-facilities/update/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/health-facilities/delete/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/health-facilities/**").hasAnyRole("USER", "ADMIN")
+
+                        // VACINAS (VACCINE)
+                        .requestMatchers(HttpMethod.POST, "/api/vaccines").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/vaccines/update/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/vaccines/delete/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/vaccines/**").hasAnyRole("USER", "ADMIN")
+
                         // QUALQUER OUTRO REQUER AUTENTICAÇÃO
                         .anyRequest().authenticated())
-                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -76,11 +94,9 @@ public class SecurityConfig {
      *
      * @param authenticationConfiguration - Configuração de autenticação do Spring Security
      * @return AuthenticationManager - Instância do gerenciador de autenticação
-     * @throws Exception - Exceção em caso de erro na configuração
      */
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
