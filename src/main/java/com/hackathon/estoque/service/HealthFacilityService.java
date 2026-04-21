@@ -5,7 +5,7 @@ import com.hackathon.estoque.dto.healthFacility.HealthFacilityResponseDTO;
 import com.hackathon.estoque.dto.healthFacility.HealthFacilityUpdateDTO;
 import com.hackathon.estoque.exception.healthFacility.HealthFacilityAlreadyExistsException;
 import com.hackathon.estoque.exception.healthFacility.HealthFacilityNotFoundException;
-import com.hackathon.estoque.exception.shared.InvalidRequiredAttributeException;
+import com.hackathon.estoque.exception.InvalidRequiredAttributeException;
 import com.hackathon.estoque.mapper.healthFacility.HealthFacilityMapper;
 import com.hackathon.estoque.model.Address;
 import com.hackathon.estoque.model.health.HealthFacility;
@@ -55,10 +55,10 @@ public class HealthFacilityService {
         healthFacility.setPhone(healthFacilityUpdateDTO.getPhone());
         healthFacility.setActive(true);
         // Update existed Address related to HealthFacility
-        Address foundAddress = addressRepository.findByHealthFacilityId(healthFacility.getId())
-                .orElse(null);
+        Optional<Address> optFoundAddress = addressRepository.findByHealthFacilityId(healthFacility.getId());
 
-        if (foundAddress != null) {
+        if (optFoundAddress.isPresent()) {
+            Address foundAddress = optFoundAddress.get();
             foundAddress.setStreet(healthFacilityUpdateDTO.getAddress().getStreet());
             foundAddress.setNumber(healthFacilityUpdateDTO.getAddress().getNumber());
             foundAddress.setComplement(healthFacilityUpdateDTO.getAddress().getComplement());

@@ -1,11 +1,9 @@
 package com.hackathon.estoque.mapper.healthFacility;
 
-import com.hackathon.estoque.dto.address.AddressResponseDTO;
+import com.hackathon.estoque.dto.AddressResponseDTO;
 import com.hackathon.estoque.dto.healthFacility.HealthFacilityRequestDTO;
 import com.hackathon.estoque.dto.healthFacility.HealthFacilityResponseDTO;
-import com.hackathon.estoque.dto.inventory.InventoryResponseDTO;
 import com.hackathon.estoque.model.health.HealthFacility;
-import com.hackathon.estoque.model.health.Inventory;
 import com.hackathon.estoque.repository.AddressRepository;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
@@ -68,10 +66,5 @@ public class HealthFaciltyMapperImpl implements HealthFacilityMapper {
                 healthFacility.isActive(),
                 addressResponseDTO
         );
-    }
-
-    @Override
-    public List<InventoryResponseDTO> inventoryListToResponseDTO(List<Inventory> inventories) {
-        return HealthFacilityMapper.super.inventoryListToResponseDTO(inventories);
     }
 }

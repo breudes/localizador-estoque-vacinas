@@ -1,6 +1,6 @@
 package com.hackathon.estoque.dto.healthFacility;
 
-import com.hackathon.estoque.dto.address.AddressResponseDTO;
+import com.hackathon.estoque.dto.AddressResponseDTO;
 import com.hackathon.estoque.dto.inventory.InventoryResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;

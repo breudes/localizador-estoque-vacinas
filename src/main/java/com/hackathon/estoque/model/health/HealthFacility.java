@@ -1,6 +1,6 @@
 package com.hackathon.estoque.model.health;
 
-import com.hackathon.estoque.dto.address.AddressRequestDTO;
+import com.hackathon.estoque.dto.AddressRequestDTO;
 import com.hackathon.estoque.model.Address;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

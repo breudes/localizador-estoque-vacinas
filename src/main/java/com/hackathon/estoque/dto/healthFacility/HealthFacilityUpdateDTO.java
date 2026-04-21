@@ -1,6 +1,6 @@
 package com.hackathon.estoque.dto.healthFacility;
 
-import com.hackathon.estoque.dto.address.AddressRequestDTO;
+import com.hackathon.estoque.dto.AddressRequestDTO;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

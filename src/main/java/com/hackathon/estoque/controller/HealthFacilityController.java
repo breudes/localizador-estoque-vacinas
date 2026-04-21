@@ -3,7 +3,7 @@ package com.hackathon.estoque.controller;
 import com.hackathon.estoque.dto.healthFacility.HealthFacilityRequestDTO;
 import com.hackathon.estoque.dto.healthFacility.HealthFacilityResponseDTO;
 import com.hackathon.estoque.dto.healthFacility.HealthFacilityUpdateDTO;
-import com.hackathon.estoque.exception.shared.InvalidRequiredAttributeException;
+import com.hackathon.estoque.exception.InvalidRequiredAttributeException;
 import com.hackathon.estoque.mapper.healthFacility.HealthFaciltyMapperImpl;
 import com.hackathon.estoque.model.health.HealthFacility;
 import com.hackathon.estoque.service.HealthFacilityService;
