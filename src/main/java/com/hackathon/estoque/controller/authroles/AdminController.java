@@ -1,4 +1,4 @@
-package com.hackathon.estoque.controller;
+package com.hackathon.estoque.controller.authroles;
 
 import com.hackathon.estoque.dto.CreateUserDTO;
 import com.hackathon.estoque.dto.UpdateUserDTO;

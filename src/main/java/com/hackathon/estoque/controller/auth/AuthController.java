@@ -1,4 +1,4 @@
-package com.hackathon.estoque.controller;
+package com.hackathon.estoque.controller.auth;
 
 import com.hackathon.estoque.dto.AuthResponseDto;
 import com.hackathon.estoque.dto.UpdatePasswordDto;

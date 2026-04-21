@@ -1,4 +1,4 @@
-package com.hackathon.estoque.controller;
+package com.hackathon.estoque.controller.authroles;
 
 import com.hackathon.estoque.dto.*;
 import com.hackathon.estoque.dto.AddressRequestDTO;
