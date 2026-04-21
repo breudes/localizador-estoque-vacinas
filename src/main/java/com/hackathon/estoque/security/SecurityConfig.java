@@ -61,10 +61,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/health-facilities/**").hasAnyRole("USER", "ADMIN")
 
                         // INVENTÁRIO DE VACINAS (INVENTORY)
-                        .requestMatchers(HttpMethod.POST, "/api/health-facilities").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/health-facilities/update/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/health-facilities/delete/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/health-facilities/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/inventories").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/inventories/update/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/inventories/delete/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/inventories/**").hasAnyRole("USER", "ADMIN")
 
                         // VACINAS (VACCINE)
                         .requestMatchers(HttpMethod.POST, "/api/vaccines").hasRole("ADMIN")
