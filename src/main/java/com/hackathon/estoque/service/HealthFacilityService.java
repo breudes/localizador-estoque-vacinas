@@ -3,20 +3,26 @@ package com.hackathon.estoque.service;
 import com.hackathon.estoque.dto.healthFacility.HealthFacilityRequestDTO;
 import com.hackathon.estoque.dto.healthFacility.HealthFacilityResponseDTO;
 import com.hackathon.estoque.dto.healthFacility.HealthFacilityUpdateDTO;
+import com.hackathon.estoque.exception.UserNotFoundException;
 import com.hackathon.estoque.exception.healthFacility.HealthFacilityAlreadyExistsException;
 import com.hackathon.estoque.exception.healthFacility.HealthFacilityNotFoundException;
 import com.hackathon.estoque.exception.InvalidRequiredAttributeException;
 import com.hackathon.estoque.mapper.healthFacility.HealthFacilityMapper;
 import com.hackathon.estoque.model.Address;
+import com.hackathon.estoque.model.User;
 import com.hackathon.estoque.model.health.HealthFacility;
 import com.hackathon.estoque.repository.AddressRepository;
 import com.hackathon.estoque.repository.HealthFacilityRepository;
+import com.hackathon.estoque.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
+
+import static com.hackathon.estoque.service.AuthService.getCurrentUserSubject;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +32,7 @@ public class HealthFacilityService {
     private final HealthFacilityMapper healthFacilityMapper;
     private final AddressService addressService;
     private final AddressRepository addressRepository;
+    private final UserRepository userRepository;
 
     public HealthFacilityResponseDTO createHealthFacility(@Valid HealthFacilityRequestDTO healthFacilityRequestDTO)
             throws HealthFacilityAlreadyExistsException {
@@ -36,6 +43,10 @@ public class HealthFacilityService {
         HealthFacility healthFacility = healthFacilityMapper.toEntity(healthFacilityRequestDTO);
         healthFacility.setAddress(address);
         HealthFacility savedHealthFacility = healthFacilityRepository.save(healthFacility);
+
+        Optional<User> foundUser = userRepository.findByCpf(getCurrentUserSubject());
+        if(foundUser.isPresent()) savedHealthFacility.setCreatedBy(foundUser.get().getId());
+        else throw new UserNotFoundException("User not found with subject");
 
         address.setHealthFacility(savedHealthFacility);
         addressRepository.save(address);
@@ -58,24 +69,38 @@ public class HealthFacilityService {
         Optional<Address> optFoundAddress = addressRepository.findByHealthFacilityId(healthFacility.getId());
 
         if (optFoundAddress.isPresent()) {
-            Address foundAddress = optFoundAddress.get();
-            foundAddress.setStreet(healthFacilityUpdateDTO.getAddress().getStreet());
-            foundAddress.setNumber(healthFacilityUpdateDTO.getAddress().getNumber());
-            foundAddress.setComplement(healthFacilityUpdateDTO.getAddress().getComplement());
-            foundAddress.setCity(healthFacilityUpdateDTO.getAddress().getCity());
-            foundAddress.setCep(healthFacilityUpdateDTO.getAddress().getCep());
-            foundAddress.setState(healthFacilityUpdateDTO.getAddress().getState());
-
+            Address foundAddress = getFoundAddress(healthFacilityUpdateDTO, optFoundAddress);
             addressRepository.save(foundAddress);
             healthFacility.setAddress(foundAddress);
         }
+
+        Optional<User> foundUser = userRepository.findByCpf(getCurrentUserSubject());
+        if(foundUser.isPresent()) healthFacility.setUpdatedBy(foundUser.get().getId());
+        else throw new UserNotFoundException("User not found with subject");
+
         return healthFacilityRepository.save(healthFacility);
+    }
+
+    private static @NonNull Address getFoundAddress(HealthFacilityUpdateDTO healthFacilityUpdateDTO, Optional<Address> optFoundAddress) {
+        Address foundAddress = optFoundAddress.get();
+        foundAddress.setStreet(healthFacilityUpdateDTO.getAddress().getStreet());
+        foundAddress.setNumber(healthFacilityUpdateDTO.getAddress().getNumber());
+        foundAddress.setComplement(healthFacilityUpdateDTO.getAddress().getComplement());
+        foundAddress.setCity(healthFacilityUpdateDTO.getAddress().getCity());
+        foundAddress.setCep(healthFacilityUpdateDTO.getAddress().getCep());
+        foundAddress.setState(healthFacilityUpdateDTO.getAddress().getState());
+        return foundAddress;
     }
 
     public Boolean deleteHealthFacility(String cnes) {
         HealthFacility healthFacility = healthFacilityRepository.findByCnes(cnes)
                 .orElseThrow(() -> new HealthFacilityNotFoundException("Estabelecimento de saúde não encontrado com CNES: " + cnes));
         healthFacility.setActive(false);
+
+        Optional<User> foundUser = userRepository.findByCpf(getCurrentUserSubject());
+        if(foundUser.isPresent()) healthFacility.setUpdatedBy(foundUser.get().getId());
+        else throw new UserNotFoundException("User not found with subject");
+
         healthFacilityRepository.save(healthFacility);
         return true;
     }

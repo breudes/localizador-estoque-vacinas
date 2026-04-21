@@ -3,15 +3,18 @@ package com.hackathon.estoque.service;
 import com.hackathon.estoque.dto.inventory.InventoryRequestDTO;
 import com.hackathon.estoque.dto.inventory.InventoryResponseDTO;
 import com.hackathon.estoque.dto.inventory.InventoryUpdateDTO;
+import com.hackathon.estoque.exception.UserNotFoundException;
 import com.hackathon.estoque.exception.inventory.InventoryAlreadyExistsException;
 import com.hackathon.estoque.exception.inventory.InventoryNotFoundException;
 import com.hackathon.estoque.exception.InvalidRequiredAttributeException;
 import com.hackathon.estoque.mapper.inventory.InventoryMapper;
+import com.hackathon.estoque.model.User;
 import com.hackathon.estoque.model.health.HealthFacility;
 import com.hackathon.estoque.model.health.Inventory;
 import com.hackathon.estoque.model.health.Vaccine;
 import com.hackathon.estoque.repository.HealthFacilityRepository;
 import com.hackathon.estoque.repository.InventoryRepository;
+import com.hackathon.estoque.repository.UserRepository;
 import com.hackathon.estoque.repository.VaccineRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static com.hackathon.estoque.service.AuthService.getCurrentUserSubject;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ public class InventoryService {
     private final InventoryMapper inventoryMapper;
     private final VaccineRepository vaccineRepository;
     private final HealthFacilityRepository healthFacilityRepository;
+    private final UserRepository userRepository;
 
     public InventoryResponseDTO createInventory(@Valid InventoryRequestDTO inventoryRequestDTO)
             throws InventoryAlreadyExistsException, InvalidRequiredAttributeException {
@@ -51,7 +57,11 @@ public class InventoryService {
         inventory.setVaccine(vaccine);
         inventory.setHealthFacility(healthFacility);
         inventory.setActive(true);
-        
+
+        Optional<User> foundUser = userRepository.findByCpf(getCurrentUserSubject());
+        if(foundUser.isPresent()) inventory.setCreatedBy(foundUser.get().getId());
+        else throw new UserNotFoundException("User not found with subject");
+
         Inventory savedInventory = inventoryRepository.save(inventory);
         return inventoryMapper.toResponseDTO(savedInventory);
     }
@@ -86,6 +96,11 @@ public class InventoryService {
                     .orElseThrow(() -> new InvalidRequiredAttributeException("Health facility not found with ID: " + inventoryUpdateDTO.getHealthFacilityId()));
             inventory.setHealthFacility(healthFacility);
         }
+
+        Optional<User> foundUser = userRepository.findByCpf(getCurrentUserSubject());
+        if(foundUser.isPresent()) inventory.setUpdatedBy(foundUser.get().getId());
+        else throw new UserNotFoundException("User not found with subject");
+
         Inventory updatedInventory = inventoryRepository.save(inventory);
         return inventoryMapper.toResponseDTO(updatedInventory);
     }
@@ -94,6 +109,11 @@ public class InventoryService {
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() -> new InventoryNotFoundException("Inventory not found with ID: " + id));
         inventory.setActive(false);
+
+        Optional<User> foundUser = userRepository.findByCpf(getCurrentUserSubject());
+        if(foundUser.isPresent()) inventory.setUpdatedBy(foundUser.get().getId());
+        else throw new UserNotFoundException("User not found with subject");
+
         inventoryRepository.save(inventory);
         return true;
     }

@@ -3,16 +3,22 @@ package com.hackathon.estoque.service;
 import com.hackathon.estoque.dto.ageRange.AgeRangeRequestDTO;
 import com.hackathon.estoque.dto.vaccine.VaccineRequestDTO;
 import com.hackathon.estoque.exception.InvalidRequiredAttributeException;
+import com.hackathon.estoque.exception.UserNotFoundException;
 import com.hackathon.estoque.exception.vaccine.VaccineAlreadyExistsException;
 import com.hackathon.estoque.exception.vaccine.VaccineNotFoundException;
 import com.hackathon.estoque.mapper.vaccine.VaccineMapperImpl;
+import com.hackathon.estoque.model.User;
 import com.hackathon.estoque.model.health.Vaccine;
+import com.hackathon.estoque.repository.UserRepository;
 import com.hackathon.estoque.repository.VaccineRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
+
+import static com.hackathon.estoque.service.AuthService.getCurrentUserSubject;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +26,18 @@ import java.util.List;
 public class VaccineService {
     private final VaccineRepository vaccineRepository;
     private final VaccineMapperImpl vaccineMapper;
+    private final UserRepository userRepository;
 
     public Vaccine createVaccine(VaccineRequestDTO vaccineRequestDTO) {
         if (vaccineRepository.existsByVaccineName(vaccineRequestDTO.getVaccineName())) {
             throw new VaccineAlreadyExistsException("Vacina com nome '" + vaccineRequestDTO.getVaccineName() + "' já está cadastrada.");
         }
         Vaccine vaccine = vaccineMapper.toEntity(vaccineRequestDTO);
+
+        Optional<User> foundUser = userRepository.findByCpf(getCurrentUserSubject());
+        if(foundUser.isPresent()) vaccine.setCreatedBy(foundUser.get().getId());
+        else throw new UserNotFoundException("User not found with subject");
+
         return vaccineRepository.save(vaccine);
     }
 
@@ -92,11 +104,21 @@ public class VaccineService {
         }
 
         BeanUtils.copyProperties(vaccineDetails, existingVaccine);
+
+        Optional<User> foundUser = userRepository.findByCpf(getCurrentUserSubject());
+        if (foundUser.isPresent()) existingVaccine.setUpdatedBy(foundUser.get().getId());
+        else throw new UserNotFoundException("User not found with subject");
+
         return vaccineRepository.save(existingVaccine);
     }
 
     public void deleteVaccine(Long id) throws InvalidRequiredAttributeException {
         Vaccine vaccine = getVaccineById(id);
+
+        Optional<User> foundUser = userRepository.findByCpf(getCurrentUserSubject());
+        if(foundUser.isPresent()) vaccine.setUpdatedBy(foundUser.get().getId());
+        else throw new UserNotFoundException("User not found with subject");
+
         vaccineRepository.delete(vaccine);
     }
 }
