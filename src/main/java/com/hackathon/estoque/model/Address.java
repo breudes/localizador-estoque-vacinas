@@ -37,6 +37,12 @@ public class Address {
     @Column(nullable = false, length = 50)
     private String cep;
 
+    @Column(nullable = false)
+    private String number;
+
+    @Column
+    private String complement;
+
     @Size(min = 2, max = 2)
     @Column(nullable = false, length = 2)
     private String state;

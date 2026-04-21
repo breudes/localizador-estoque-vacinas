@@ -22,6 +22,12 @@ public class AddressRequestDTO {
     @Size(max = 255, message = "Street must not exceed 255 characters")
     private String street;
 
+    @NotBlank(message = "Number is required")
+    private String number;
+
+    @NotBlank(message = "Complement is required")
+    private String complement;
+
     @NotBlank(message = "City is required")
     @Size(max = 100, message = "City must not exceed 100 characters")
     private String city;

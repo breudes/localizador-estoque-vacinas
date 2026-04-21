@@ -4,6 +4,7 @@ import com.hackathon.estoque.dto.AddressRequestDTO;
 import com.hackathon.estoque.model.Address;
 import com.hackathon.estoque.model.User;
 import com.hackathon.estoque.repository.AddressRepository;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,6 @@ public class AddressService {
     private final AddressRepository addressRepository;
 
     public Address createAddress(AddressRequestDTO dto, User user) {
-
         Address address = Address.builder()
                 .cep(dto.getCep())
                 .street(dto.getStreet())
@@ -38,5 +38,16 @@ public class AddressService {
         address.setState(dto.getState());
 
         return addressRepository.save(address);
+    }
+
+    public Address createAddressHealthFacility(@NotNull(message = "Address is required") AddressRequestDTO addressRequestDTO) {
+        return Address.builder()
+                .cep(addressRequestDTO.getCep())
+                .street(addressRequestDTO.getStreet())
+                .number(addressRequestDTO.getNumber())
+                .complement(addressRequestDTO.getComplement())
+                .city(addressRequestDTO.getCity())
+                .state(addressRequestDTO.getState())
+                .build();
     }
 }
