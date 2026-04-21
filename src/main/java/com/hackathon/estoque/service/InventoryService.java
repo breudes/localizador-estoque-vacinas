@@ -5,7 +5,7 @@ import com.hackathon.estoque.dto.inventory.InventoryResponseDTO;
 import com.hackathon.estoque.dto.inventory.InventoryUpdateDTO;
 import com.hackathon.estoque.exception.inventory.InventoryAlreadyExistsException;
 import com.hackathon.estoque.exception.inventory.InventoryNotFoundException;
-import com.hackathon.estoque.exception.shared.InvalidRequiredAttributeException;
+import com.hackathon.estoque.exception.InvalidRequiredAttributeException;
 import com.hackathon.estoque.mapper.inventory.InventoryMapper;
 import com.hackathon.estoque.model.health.HealthFacility;
 import com.hackathon.estoque.model.health.Inventory;

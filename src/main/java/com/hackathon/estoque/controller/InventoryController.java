@@ -3,7 +3,7 @@ package com.hackathon.estoque.controller;
 import com.hackathon.estoque.dto.inventory.InventoryRequestDTO;
 import com.hackathon.estoque.dto.inventory.InventoryResponseDTO;
 import com.hackathon.estoque.dto.inventory.InventoryUpdateDTO;
-import com.hackathon.estoque.exception.shared.InvalidRequiredAttributeException;
+import com.hackathon.estoque.exception.InvalidRequiredAttributeException;
 import com.hackathon.estoque.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
