@@ -4,25 +4,17 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.hackathon.estoque.model.User;
 import com.hackathon.estoque.repository.UserRepository;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.lang.NonNull;
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
-
-    private static final Logger logger = LoggerFactory.getLogger(SecurityFilter.class);
-
     @Autowired
     TokenService tokenService;
 
@@ -35,13 +27,19 @@ public class SecurityFilter extends OncePerRequestFilter {
      * associando-o ao contexto de segurança.
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
         var token = this.recoverToken(request);
 
         if (token != null) {
             var subject = tokenService.validateToken(token);
+
+            // Definindo uma variável de ambiente para o Spring, que pode ser acessada
+            // em outros pontos da aplicação.
+            request.setAttribute("subjectFromToken", subject);
 
             System.out.println("Subject extraído do Token: [" + subject + "]");
 
