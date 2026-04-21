@@ -2,7 +2,7 @@ package com.hackathon.estoque.service;
 
 import com.hackathon.estoque.dto.ageRange.AgeRangeRequestDTO;
 import com.hackathon.estoque.dto.vaccine.VaccineRequestDTO;
-import com.hackathon.estoque.exception.shared.InvalidRequiredAttributeException;
+import com.hackathon.estoque.exception.InvalidRequiredAttributeException;
 import com.hackathon.estoque.exception.vaccine.VaccineAlreadyExistsException;
 import com.hackathon.estoque.exception.vaccine.VaccineNotFoundException;
 import com.hackathon.estoque.mapper.vaccine.VaccineMapperImpl;

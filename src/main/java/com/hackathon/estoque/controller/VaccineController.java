@@ -3,7 +3,7 @@ package com.hackathon.estoque.controller;
 import com.hackathon.estoque.dto.ageRange.AgeRangeRequestDTO;
 import com.hackathon.estoque.dto.vaccine.VaccineRequestDTO;
 import com.hackathon.estoque.dto.vaccine.VaccineResponseDTO;
-import com.hackathon.estoque.exception.shared.InvalidRequiredAttributeException;
+import com.hackathon.estoque.exception.InvalidRequiredAttributeException;
 import com.hackathon.estoque.mapper.vaccine.VaccineMapperImpl;
 import com.hackathon.estoque.model.health.Vaccine;
 import com.hackathon.estoque.service.VaccineService;
