@@ -28,6 +28,13 @@ O sistema está configurado para conectar no MySQL com:
 - **Senha**: `root`
 - **URL**: `localhost:3306`
 
+## Configurações de variáveis de ambiente
+
+- MYSQL_DATABASE: nome do banco de dados
+- MYSQL_USER: nome de usuário do banco de dados
+- MYSQL_PASSWORD: senha do banco de dados
+- SECRET_TOKEN: token de segurança para a autenticação via JWT
+
 ## Funcionalidades Implementadas
 
 - **Cadastro de usuário** com CPF, nome, email e senha  
@@ -129,7 +136,7 @@ curl -X GET http://localhost:8080/api/test/user \
 ```
 
 ## Coleção no Postman
-Deixamos o link da coleção da API com as requisições e exemplos de cada rota implementada: https://science-geologist-36836819-8391627.postman.co/workspace/Brenda-Alexandra-Souza's-Worksp~a4ad9bde-056e-4d12-83eb-cdf12988fc7c/collection/47077132-dcd4258e-3021-4398-8bdd-488172f1252c?action=share&source=copy-link&creator=47077132
+Deixamos o link da coleção da API com as requisições e exemplos de cada rota implementada: https://www.postman.com/science-geologist-36836819-8391627/brenda-alexandra-souza-s-workspace
 
 ## Validações Implementadas
 
